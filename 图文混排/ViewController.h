@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Global.h"
+#import "EmotionListView.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, EmotionListViewDelegate>
 
 
 @end
