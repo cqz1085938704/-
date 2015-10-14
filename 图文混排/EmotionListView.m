@@ -20,6 +20,8 @@
 {
     if (self = [super initWithFrame:frame])
     {
+        self.backgroundColor = [UIColor whiteColor];
+        
         self.pagingEnabled = YES;
         self.contentSize = CGSizeMake(frame.size.width * 5, frame.size.height);
         self.showsHorizontalScrollIndicator = NO;

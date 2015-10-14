@@ -88,15 +88,14 @@
 {
     if (self.textField.isFirstResponder)
     {
-        [self.textField resignFirstResponder];
-        
-        self.toolBar.frame = CGRectMake(0, WIN_SIZE.height - 200 - 44, WIN_SIZE.width, 44);
         EmotionListView *emotionListView = [[EmotionListView alloc] initWithFrame:CGRectMake(0, WIN_SIZE.height - 200, WIN_SIZE.width, 200)];
         emotionListView.delegate = self;
         emotionListView.tag = 500;
         [self.view addSubview:emotionListView];
         
         self.tableView.frame = CGRectMake(0, 20, WIN_SIZE.width, WIN_SIZE.height - 20 - 44 - 200);
+        [self.textField resignFirstResponder];
+        self.toolBar.frame = CGRectMake(0, WIN_SIZE.height - 200 - 44, WIN_SIZE.width, 44);
     }
     else
     {
@@ -133,12 +132,6 @@
     return _tableView;
 }
 
-//-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-//{
-//    
-//    return YES;
-//}
-
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (self.textField.text.length == 0)
@@ -150,6 +143,12 @@
     [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.recordArr.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
     self.textField.text = @"";
     
+    return YES;
+}
+
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    [[self.view viewWithTag:500] removeFromSuperview];
     return YES;
 }
 
@@ -207,7 +206,21 @@
         cell.textLabel.numberOfLines = 0;
     }
     
-    cell.textLabel.text = self.recordArr[indexPath.row];
+    NSString *pattern = @"/[\\u4e00-\\u9fa5]{2}";
+    NSRegularExpression *regx = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
+    NSArray *results = [regx matchesInString:self.recordArr[indexPath.row] options:NSMatchingReportCompletion range:NSMakeRange(0, [self.recordArr[indexPath.row] length])];
+    if (results.count != 0)
+    {
+        NSTextCheckingResult * res = [results lastObject];
+        NSString *strdd = [self.recordArr[indexPath.row] substringWithRange:res.range];
+        NSLog(@"%@", strdd);
+    }
+    
+    NSTextAttachment *textA = [[NSTextAttachment alloc] init];
+    textA.image = [UIImage imageNamed:@"Expression_1"];
+    
+    NSMutableAttributedString *mrfdg = [NSMutableAttributedString attributedStringWithAttachment:textA];
+    cell.textLabel.attributedText = mrfdg;
     
     return cell;
 }
