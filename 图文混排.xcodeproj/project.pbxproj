@@ -119,6 +119,8 @@
 		328F3AFD1BCE295E008D4CB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 328F3AFB1BCE295E008D4CB1 /* Main.storyboard */; };
 		328F3AFF1BCE295E008D4CB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 328F3AFE1BCE295E008D4CB1 /* Assets.xcassets */; };
 		328F3B021BCE295E008D4CB1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 328F3B001BCE295E008D4CB1 /* LaunchScreen.storyboard */; };
+		32A28B451BCF3ED70090AA19 /* EmotionMap.plist in Resources */ = {isa = PBXBuildFile; fileRef = 32A28B441BCF3ED70090AA19 /* EmotionMap.plist */; settings = {ASSET_TAGS = (); }; };
+		32B1245A1BCF8B0900439D51 /* CustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B124591BCF8B0900439D51 /* CustomCell.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -240,6 +242,9 @@
 		328F3AFE1BCE295E008D4CB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		328F3B011BCE295E008D4CB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		328F3B031BCE295E008D4CB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		32A28B441BCF3ED70090AA19 /* EmotionMap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = EmotionMap.plist; sourceTree = "<group>"; };
+		32B124581BCF8B0900439D51 /* CustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCell.h; sourceTree = "<group>"; };
+		32B124591BCF8B0900439D51 /* CustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -370,6 +375,8 @@
 			children = (
 				324169941BCE3931005D7C68 /* EmotionListView.h */,
 				324169951BCE3931005D7C68 /* EmotionListView.m */,
+				32B124581BCF8B0900439D51 /* CustomCell.h */,
+				32B124591BCF8B0900439D51 /* CustomCell.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -404,6 +411,7 @@
 				328F3B031BCE295E008D4CB1 /* Info.plist */,
 				328F3AF21BCE295E008D4CB1 /* Supporting Files */,
 				324169971BCE3B7B005D7C68 /* Global.h */,
+				32A28B441BCF3ED70090AA19 /* EmotionMap.plist */,
 			);
 			path = "图文混排";
 			sourceTree = "<group>";
@@ -561,6 +569,7 @@
 				3241693C1BCE375B005D7C68 /* Expression_19@2x.png in Resources */,
 				324169881BCE375B005D7C68 /* Expression_95@2x.png in Resources */,
 				324169761BCE375B005D7C68 /* Expression_77@2x.png in Resources */,
+				32A28B451BCF3ED70090AA19 /* EmotionMap.plist in Resources */,
 				3241698C1BCE375B005D7C68 /* Expression_99@2x.png in Resources */,
 				324169911BCE375B005D7C68 /* Expression_104@2x.png in Resources */,
 				328F3AFF1BCE295E008D4CB1 /* Assets.xcassets in Resources */,
@@ -596,6 +605,7 @@
 				328F3AF71BCE295E008D4CB1 /* AppDelegate.m in Sources */,
 				324169961BCE3931005D7C68 /* EmotionListView.m in Sources */,
 				328F3AF41BCE295E008D4CB1 /* main.m in Sources */,
+				32B1245A1BCF8B0900439D51 /* CustomCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

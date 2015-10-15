@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Global.h"
 #import "EmotionListView.h"
+#import "CustomCell.h"
 
 @interface ViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, EmotionListViewDelegate>
 

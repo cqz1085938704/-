@@ -20,6 +20,7 @@
 
 @implementation ViewController
 
+#pragma mark - application life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -36,6 +37,7 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - keyboard
 - (void)observeKeyboardChange
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -56,7 +58,11 @@
         
         self.toolBar.frame = CGRectMake(0, WIN_SIZE.height - 44 - keyBoardHeight, WIN_SIZE.width, 44);
         self.tableView.frame = CGRectMake(0, 20, WIN_SIZE.width, WIN_SIZE.height - keyBoardHeight - 64);
-    
+        
+        if (self.recordArr.count > 0)
+        {
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.recordArr.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
     }];
 }
 
@@ -72,6 +78,7 @@
     }];
 }
 
+#pragma mark - lazy loading
 -(UIButton *)emotionBtn
 {
     if (!_emotionBtn)
@@ -84,92 +91,16 @@
     return _emotionBtn;
 }
 
-- (void)showEmotionView
-{
-    if (self.textField.isFirstResponder)
-    {
-        EmotionListView *emotionListView = [[EmotionListView alloc] initWithFrame:CGRectMake(0, WIN_SIZE.height - 200, WIN_SIZE.width, 200)];
-        emotionListView.delegate = self;
-        emotionListView.tag = 500;
-        [self.view addSubview:emotionListView];
-        
-        self.tableView.frame = CGRectMake(0, 20, WIN_SIZE.width, WIN_SIZE.height - 20 - 44 - 200);
-        [self.textField resignFirstResponder];
-        self.toolBar.frame = CGRectMake(0, WIN_SIZE.height - 200 - 44, WIN_SIZE.width, 44);
-    }
-    else
-    {
-        [[self.view viewWithTag:500] removeFromSuperview];
-        
-        [self.textField becomeFirstResponder];
-    }
-}
-
--(void)imageViewTapedWithTag:(NSInteger)index
-{
-    NSString *emotionStr = nil;
-    
-    switch (index)
-    {
-        case 1:
-            emotionStr = @"/笑脸";
-            break;
-        default:
-            break;
-    }
-    
-    self.textField.text = emotionStr;
-}
-
 -(UITableView *)tableView
 {
     if (!_tableView)
     {
         _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 20, WIN_SIZE.width, WIN_SIZE.height - 64) style:UITableViewStylePlain];
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.delegate = self;
         _tableView.dataSource = self;
     }
     return _tableView;
-}
-
--(BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    if (self.textField.text.length == 0)
-    {
-        return NO;
-    }
-    
-    [self.recordArr addObject:self.textField.text];
-    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.recordArr.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
-    self.textField.text = @"";
-    
-    return YES;
-}
-
--(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-{
-    [[self.view viewWithTag:500] removeFromSuperview];
-    return YES;
-}
-
--(UITextField *)textField
-{
-    if (!_textField)
-    {
-        _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, WIN_SIZE.width - 20, 30)];
-        _textField.borderStyle = UITextBorderStyleRoundedRect;
-        _textField.returnKeyType = UIReturnKeySend;
-        _textField.delegate = self;
-    }
-    return  _textField;
-}
-
--(void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    if (scrollView == self.tableView)
-    {
-        [self.textField resignFirstResponder];
-    }
 }
 
 -(UIToolbar *)toolBar
@@ -190,6 +121,97 @@
     return _recordArr;
 }
 
+-(UITextField *)textField
+{
+    if (!_textField)
+    {
+        _textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, WIN_SIZE.width - 20 - 10 - 30, 30)];
+        _textField.borderStyle = UITextBorderStyleRoundedRect;
+        _textField.returnKeyType = UIReturnKeySend;
+        _textField.delegate = self;
+    }
+    return  _textField;
+}
+
+#pragma mark - other
+- (void)showEmotionView
+{
+    if (self.textField.isFirstResponder)
+    {
+        [self.textField resignFirstResponder];
+        self.toolBar.frame = CGRectMake(0, WIN_SIZE.height - 200 - 44, WIN_SIZE.width, 44);
+        self.tableView.frame = CGRectMake(0, 20, WIN_SIZE.width, WIN_SIZE.height - 20 - 44 - 200);
+        
+        EmotionListView *emotionListView = [[EmotionListView alloc] initWithFrame:CGRectMake(0, WIN_SIZE.height - 200, WIN_SIZE.width, 200)];
+        emotionListView.delegate = self;
+        emotionListView.tag = 500;
+        [self.view addSubview:emotionListView];
+    }
+    else
+    {
+        [[self.view viewWithTag:500] removeFromSuperview];
+        
+        [self.textField becomeFirstResponder];
+    }
+}
+
+#pragma mark - EmotionListViewDelegate
+-(void)imageViewTapedWithTag:(NSInteger)index
+{
+    NSMutableString *mStr = [[NSMutableString alloc] initWithCapacity:1];
+    [mStr appendString:self.textField.text];
+    
+    NSString *emotionName = [self getEmotionStringWithIndex:index];
+    
+    [mStr appendString:emotionName];
+    self.textField.text = mStr;
+}
+
+- (NSString *)getEmotionStringWithIndex:(NSInteger)index
+{
+    NSString *imageName = [NSString stringWithFormat:@"Expression_%li", (long)index];
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"EmotionMap" ofType:@"plist"];
+    NSDictionary *emotionDic = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    NSString *emotionName = emotionDic[imageName];
+    return emotionName;
+}
+
+
+#pragma mark - UITextFieldDelegate
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (self.textField.text.length == 0)
+    {
+        return NO;
+    }
+    
+    [self.recordArr addObject:self.textField.text];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.recordArr.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+    self.textField.text = @"";
+    
+    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.recordArr.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
+    return YES;
+}
+
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    [[self.view viewWithTag:500] removeFromSuperview];
+    return YES;
+}
+
+
+#pragma mark - UIScrollViewDelegate
+-(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    if (scrollView == self.tableView)
+    {
+        [self.textField resignFirstResponder];
+    }
+}
+
+
+#pragma mark - UITableViewDelegate and UITextFieldDelegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -199,35 +221,72 @@
 {
     static NSString *cellId = @"cell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    CustomCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     if (!cell)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
-        cell.textLabel.numberOfLines = 0;
+        cell = [[CustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
     }
     
-    NSString *pattern = @"/[\\u4e00-\\u9fa5]{2}";
+    NSString *message = self.recordArr[indexPath.row];
+    
+    NSString *pattern = @"\\[[\\u4e00-\\u9fa5]+\\]";
     NSRegularExpression *regx = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
-    NSArray *results = [regx matchesInString:self.recordArr[indexPath.row] options:NSMatchingReportCompletion range:NSMakeRange(0, [self.recordArr[indexPath.row] length])];
-    if (results.count != 0)
+    NSArray *results = [regx matchesInString:message options:NSMatchingReportCompletion range:NSMakeRange(0, [message length])];
+    
+    
+    
+    if (results.count == 0)
     {
-        NSTextCheckingResult * res = [results lastObject];
-        NSString *strdd = [self.recordArr[indexPath.row] substringWithRange:res.range];
-        NSLog(@"%@", strdd);
+        cell.textLabel.text = message;
+    }
+    else
+    {
+        NSMutableAttributedString *mutableAttributedStr = [[NSMutableAttributedString alloc] initWithString:message];
+        NSMutableString *mstr = [NSMutableString stringWithString:message];
+        for (NSTextCheckingResult *checkingResult in results)
+        {
+            NSString *emotionStr = [message substringWithRange:checkingResult.range];
+            NSLog(@"%@", emotionStr);
+            
+            NSString *filePath = [[NSBundle mainBundle] pathForResource:@"EmotionMap" ofType:@"plist"];
+            NSDictionary *emotionDic = [NSDictionary dictionaryWithContentsOfFile:filePath];
+            
+            NSTextAttachment *textA = [[NSTextAttachment alloc] init];
+            for (NSString *key in [emotionDic allKeys])
+            {
+                if ([emotionDic[key] isEqual:emotionStr])
+                {
+                    textA.image = [UIImage imageNamed:key];
+                    break;
+                }
+            }
+            NSAttributedString *emotionAttr = [NSAttributedString attributedStringWithAttachment:textA];
+            [mutableAttributedStr replaceCharactersInRange:[mstr rangeOfString:emotionStr] withAttributedString:emotionAttr];
+            [mstr replaceOccurrencesOfString:emotionStr withString:@"1" options:NSCaseInsensitiveSearch range:NSMakeRange(0, mstr.length)];
+        }
+        
+        
+        cell.textLabel.attributedText = mutableAttributedStr;
     }
     
-    NSTextAttachment *textA = [[NSTextAttachment alloc] init];
-    textA.image = [UIImage imageNamed:@"Expression_1"];
+    cell.imageView.image = [UIImage imageNamed:@"Expression_1@2x"];
     
-    NSMutableAttributedString *mrfdg = [NSMutableAttributedString attributedStringWithAttachment:textA];
-    cell.textLabel.attributedText = mrfdg;
+    [cell layoutSubviews];
     
     return cell;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 40;
+    CGRect rect = [self.recordArr[indexPath.row] boundingRectWithSize:CGSizeMake(WIN_SIZE.width - 90, 99999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} context:nil];
+    CGFloat height = 10 + rect.size.height + 10 + 10;
+    
+    if (height < 80)
+    {
+        return 80;
+    }
+    
+    return height;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
