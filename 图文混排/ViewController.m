@@ -42,12 +42,6 @@
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
-}
-
-- (void)keyboardWillChangeFrame:(NSNotification *)notify
-{
-    
 }
 
 - (void)keyBoardWillShow:(NSNotification *)notify
@@ -233,8 +227,6 @@
     NSRegularExpression *regx = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
     NSArray *results = [regx matchesInString:message options:NSMatchingReportCompletion range:NSMakeRange(0, [message length])];
     
-    
-    
     if (results.count == 0)
     {
         cell.textLabel.text = message;
@@ -242,9 +234,12 @@
     else
     {
         NSMutableAttributedString *mutableAttributedStr = [[NSMutableAttributedString alloc] initWithString:message];
-        NSMutableString *mstr = [NSMutableString stringWithString:message];
+        //NSMutableString *mstr = [NSMutableString stringWithString:message];
         for (NSTextCheckingResult *checkingResult in results)
         {
+            NSArray *arr1 = [message componentsSeparatedByString:[message substringWithRange:checkingResult.range]];
+            
+            
             NSString *emotionStr = [message substringWithRange:checkingResult.range];
             NSLog(@"%@", emotionStr);
             
@@ -261,8 +256,6 @@
                 }
             }
             NSAttributedString *emotionAttr = [NSAttributedString attributedStringWithAttachment:textA];
-            [mutableAttributedStr replaceCharactersInRange:[mstr rangeOfString:emotionStr] withAttributedString:emotionAttr];
-            [mstr replaceOccurrencesOfString:emotionStr withString:@"1" options:NSCaseInsensitiveSearch range:NSMakeRange(0, mstr.length)];
         }
         
         
@@ -270,8 +263,6 @@
     }
     
     cell.imageView.image = [UIImage imageNamed:@"Expression_1@2x"];
-    
-    [cell layoutSubviews];
     
     return cell;
 }
@@ -293,11 +284,6 @@
 {
     return self.recordArr.count;
 }
-
-
-
-
-
 
 
 

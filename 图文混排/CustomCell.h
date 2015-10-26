@@ -11,6 +11,4 @@
 
 @interface CustomCell : UITableViewCell
 
-- (void)layoutSubviews;
-
 @end

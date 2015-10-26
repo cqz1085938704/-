@@ -29,6 +29,7 @@
         
         self.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
         self.imageView.backgroundColor = [UIColor orangeColor];
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
 }
@@ -53,7 +54,7 @@
 {
     [super layoutSubviews];
     
-    CGRect rect = [self.textLabel.text boundingRectWithSize:CGSizeMake(WIN_SIZE.width - 10 - 60 - 10 - 10, 99999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} context:nil];
+    CGRect rect = [self.textLabel.text boundingRectWithSize:CGSizeMake(WIN_SIZE.width - 10 - 60 - 10 - 10, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} context:nil];
     CGFloat height = rect.size.height + 10;
     NSLog(@"height:%f", height);
     self.imageView.frame = CGRectMake(WIN_SIZE.width - 10 - 60, 10, 60, 60);
